@@ -1,0 +1,11 @@
+[package]
+name = "tbc"
+version = "0.1.0"
+authors = ["JD <jeandamien.brossillon@gmail.com>"]
+
+[dependencies]
+hyper = "0.11"
+hyper-tls = "0.1.2"
+futures = "0.1"
+tokio-core = "0.1"
+url = "1.6.0"
