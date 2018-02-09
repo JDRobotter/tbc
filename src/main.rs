@@ -18,14 +18,21 @@ use url::Url;
 use xml::reader::{EventReader, XmlEvent};
 use std::collections::HashMap;
 
+struct Vehicule {
+    name: String,
+    speed: f32,
+    latitude: f32,
+    longitude: f32,
+}
+
 fn parse_xml_response(body: &str) {
 
     println!("{}",body);
     let parser = EventReader::from_str(body);
     let mut element_name: Option<_> = None;
     let mut vehicule_name: Option<_> = None;
-    let mut vehicule_speed: Option<_> = None;
-    let mut vehicule_position: Option<_> = None;
+    let mut vehicule_speed: Option<String> = None;
+    let mut vehicule_position: Option<String> = None;
     //let mut vehicules = HashMap::new();
 
     for e in parser {
@@ -45,7 +52,21 @@ fn parse_xml_response(body: &str) {
             Ok(XmlEvent::EndElement {name}) => {
                 match name.local_name.as_ref() {
                     "SV_VEHIC_P" => {
-                        println!("{:?}: {:?} {:?}", vehicule_name, vehicule_speed, vehicule_position);
+                        let speed: f32 = match vehicule_speed.as_ref() {
+                            Some(vs) => vs.parse().unwrap(), 
+                            None => 0.0,
+                        };
+
+                        let position: (f32,f32) = match vehicule_position.as_ref() {
+                            Some(vp) => {
+                                let mut iter = vp.split_whitespace();
+                                let x:f32 = iter.next().unwrap().parse().unwrap();
+                                let y:f32 = iter.next().unwrap().parse().unwrap();
+                                (x,y)
+                            },
+                            None => (0.0,0.0),
+                        };
+                        println!("{:?}: {:?} {:?}", vehicule_name, speed, position);
                         
                     },
                     _ => {},
